@@ -6,6 +6,11 @@ mod waker;
 use crate::{exec::block_on, reactor::Reactor, task::Task};
 use std::time::Instant;
 
+// #[tokio::main]
+// async fn main() {
+//     run_futures().await;
+// }
+
 fn main() {
     block_on(run_futures());
 }
@@ -28,4 +33,7 @@ async fn run_futures() {
 
     fut1.await;
     fut2.await;
+
+    // Or we can run futures concurrently:
+    // futures::future::join(fut1, fut2).await;
 }

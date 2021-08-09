@@ -1,15 +1,19 @@
+use crate::parker::Parker;
 use std::{
     sync::Arc,
     task::{RawWaker, RawWakerVTable, Waker},
-    thread,
 };
 
 #[derive(Clone, Debug)]
 pub struct MyWaker {
-    pub thread: thread::Thread,
+    pub parker: Arc<Parker>,
 }
 
 impl MyWaker {
+    pub fn new(parker: Arc<Parker>) -> MyWaker {
+        MyWaker { parker }
+    }
+
     pub fn into_waker(s: *const MyWaker) -> Waker {
         let raw_waker = RawWaker::new(s as *const (), &VTABLE);
         unsafe { Waker::from_raw(raw_waker) }
@@ -24,11 +28,11 @@ impl MyWaker {
 
     fn vtable_wake(s: *const MyWaker) {
         let waker_arc = unsafe { Arc::from_raw(s) };
-        waker_arc.thread.unpark();
+        waker_arc.parker.unpark();
     }
 
     unsafe fn vtable_wake_by_ref(s: *const MyWaker) {
-        (*s).thread.unpark();
+        (*s).parker.unpark();
     }
 
     unsafe fn vtable_drop(s: *const MyWaker) {
@@ -45,11 +49,3 @@ const VTABLE: RawWakerVTable = unsafe {
         |s| MyWaker::vtable_drop(s as *const MyWaker),
     )
 };
-
-impl Default for MyWaker {
-    fn default() -> Self {
-        MyWaker {
-            thread: thread::current(),
-        }
-    }
-}

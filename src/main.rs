@@ -2,6 +2,7 @@ mod exec;
 mod reactor;
 mod task;
 mod waker;
+mod parker;
 
 use crate::{exec::block_on, reactor::Reactor, task::Task};
 use std::time::Instant;

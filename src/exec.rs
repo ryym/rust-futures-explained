@@ -8,8 +8,8 @@ use std::{
 
 pub fn block_on<F: Future>(mut future: F) -> F::Output {
     let parker = Arc::new(Parker::default());
-    let mywaker = Arc::new(MyWaker::new(parker.clone()));
-    let waker = MyWaker::into_waker(Arc::into_raw(mywaker));
+    let mywaker = MyWaker::new(parker.clone());
+    let waker = mywaker.into_waker();
 
     let mut cx = Context::from_waker(&waker);
     let mut future = unsafe { Pin::new_unchecked(&mut future) };

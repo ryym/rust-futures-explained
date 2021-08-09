@@ -14,8 +14,9 @@ impl MyWaker {
         MyWaker { parker }
     }
 
-    pub fn into_waker(s: *const MyWaker) -> Waker {
-        let raw_waker = RawWaker::new(s as *const (), &VTABLE);
+    pub fn into_waker(self) -> Waker {
+        let raw_arc = Arc::into_raw(Arc::new(self));
+        let raw_waker = RawWaker::new(raw_arc as *const (), &VTABLE);
         unsafe { Waker::from_raw(raw_waker) }
     }
 

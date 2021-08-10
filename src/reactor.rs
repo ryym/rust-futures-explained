@@ -12,7 +12,7 @@ use std::{
 };
 
 #[derive(Debug)]
-pub enum TaskState {
+enum TaskState {
     Ready,
     NotReady(Waker),
     Finished,
@@ -29,6 +29,7 @@ pub struct Reactor {
     dispatcher: Sender<Message>,
     handle: Option<JoinHandle<()>>,
     tasks: HashMap<TaskId, TaskState>,
+    task_id: TaskId,
 }
 
 impl Reactor {
@@ -38,6 +39,7 @@ impl Reactor {
             dispatcher: tx,
             handle: None,
             tasks: HashMap::new(),
+            task_id: 0,
         })));
 
         // XXX: Weak を使うメリットってあるんだろうか？
@@ -66,6 +68,11 @@ impl Reactor {
 
         reactor.lock().map(|mut r| r.handle = Some(handle)).unwrap();
         reactor
+    }
+
+    pub fn next_task_id(&mut self) -> TaskId {
+        self.task_id += 1;
+        self.task_id
     }
 
     fn wake(&mut self, id: TaskId) {

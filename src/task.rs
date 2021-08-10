@@ -16,7 +16,8 @@ pub struct Task {
 }
 
 impl Task {
-    pub fn new(reactor: Arc<Mutex<Box<Reactor>>>, data: u64, id: TaskId) -> Self {
+    pub fn new(reactor: Arc<Mutex<Box<Reactor>>>, data: u64) -> Self {
+        let id = reactor.lock().unwrap().next_task_id();
         Task { id, reactor, data }
     }
 }

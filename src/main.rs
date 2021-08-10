@@ -20,8 +20,8 @@ async fn run_futures() {
     let start = Instant::now();
 
     let reactor = Reactor::new();
-    let future1 = Task::new(reactor.clone(), 1, 1);
-    let future2 = Task::new(reactor.clone(), 2, 2);
+    let future1 = Task::new(reactor.clone(), 1);
+    let future2 = Task::new(reactor.clone(), 2);
 
     let fut1 = async {
         let val = future1.await;

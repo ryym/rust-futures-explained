@@ -23,8 +23,6 @@ impl Task {
 }
 
 impl Future for Task {
-    // XXX: この Output ってどういう風に使うんだろう？
-    // 今回のサンプルだと特に使い道はなさそう。
     type Output = TaskId;
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
